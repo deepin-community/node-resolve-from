@@ -1,0 +1,144 @@
+Description: switch test from ava to tape
+Author: Xavier Guimard <yadd@debian.org>
+Forwarded: not-needed
+Last-Update: 2020-12-06
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/Xcall/test.js
++++ b/Xcall/test.js
+@@ -1,7 +1,8 @@
+-import path from 'path';
+-import test from 'ava';
+-import callsites from '.';
++const path = require('path');
++const test = require('tape');
++const callsites = require('.');
+ 
+ test('main', t => {
+ 	t.is(path.basename(callsites()[0].getFileName()), 'test.js');
++  t.end();
+ });
+--- a/Xfresh/test.js
++++ b/Xfresh/test.js
+@@ -1,6 +1,6 @@
+-import path from 'path';
+-import test from 'ava';
+-import importFresh from '.';
++const path = require('path');
++const test = require('tape');
++const importFresh = require('.');
+ 
+ test('main', t => {
+ 	const id = './fixture';
+@@ -11,6 +11,7 @@
+ 	t.is(importFresh(id)(), 1);
+ 	t.is(importFresh(id)(), 1);
+ 	t.is(require(id)(), 2);
++    t.end();
+ });
+ 
+ test('proper parent value', t => {
+@@ -20,13 +21,15 @@
+ 
+ 	const childModule = require.cache[path.resolve(__dirname, `${id}.js`)];
+ 	t.is(childModule.parent, module);
++    t.end();
+ });
+ 
+ test('self import', t => {
+ 	const id = './fixture-importer';
+-	t.notThrows(() => {
++	t.doesNotThrow(() => {
+ 		importFresh(id)(id);
+ 	});
++    t.end();
+ });
+ 
+ test('import when parent removed from cache', t => {
+@@ -34,9 +37,10 @@
+ 	const importer = importFresh(id);
+ 	t.true(require.cache[importer.__filename] !== undefined);
+ 	delete require.cache[importer.__filename];
+-	t.notThrows(() => {
++	t.doesNotThrow(() => {
+ 		importer(id);
+ 	});
++    t.end();
+ });
+ 
+ test('should not fail when there is no parent module', t => {
+@@ -53,9 +57,10 @@
+ 	const id = './fixture-importer';
+ 	const importer = importFresh(id);
+ 
+-	t.notThrows(() => {
++	t.doesNotThrow(() => {
+ 		importer(id);
+ 	});
+ 
+ 	require.cache[targetPath] = orignalModule;
++    t.end();
+ });
+--- a/Xparent/test.js
++++ b/Xparent/test.js
+@@ -1,13 +1,15 @@
+-import path from 'path';
+-import test from 'ava';
+-import execa from 'execa';
++const path = require('path');
++const test = require('tape');
++const execa = require('execa');
+ 
+ test('main', async t => {
+ 	const {stdout} = await execa('node', ['./fixtures/main/1.js']);
+ 	t.is(path.basename(stdout), '1.js');
++  t.end();
+ });
+ 
+ test('filepath option', async t => {
+ 	const {stdout} = await execa('node', ['./fixtures/filepath/1.js']);
+ 	t.is(path.basename(stdout), '1.js');
++  t.end();
+ });
+--- a/test.js
++++ b/test.js
+@@ -1,11 +1,11 @@
+-import test from 'ava';
+-import resolveFrom from '.';
++const test = require('tape');
++const resolveFrom = require('.');
+ 
+ test('resolveFrom()', t => {
+ 	t.throws(() => resolveFrom(1, './fixture'), /got `number`/);
+ 	t.throws(() => resolveFrom('fixture'), /got `undefined`/);
+ 
+-	t.regex(resolveFrom('fixture', './fixture'), /fixture\/fixture\.js$/);
++	t.match(resolveFrom('fixture', './fixture'), /fixture\/fixture\.js$/);
+ 
+ 	const moduleNotFoundError = t.throws(() => {
+ 		resolveFrom('fixture', './nonexistent');
+@@ -14,17 +14,21 @@
+ 	t.is(moduleNotFoundError.message.split(/[\n\r]+/)[0], 'Cannot find module \'./nonexistent\'');
+ 
+ 	const resolveFromfixture = resolveFrom.bind(null, 'fixture');
+-	t.regex(resolveFromfixture('./fixture'), /fixture\/fixture\.js$/);
++	t.match(resolveFromfixture('./fixture'), /fixture\/fixture\.js$/);
+ 
+ 	t.truthy(resolveFrom('./fixture/fixture-for-symlinks/symlink-target', 'foo'));
++
++	t.end();
+ });
+ 
+ test('resolveFrom.silent()', t => {
+-	t.regex(resolveFrom.silent('fixture', './fixture'), /fixture\/fixture\.js$/);
++	t.match(resolveFrom.silent('fixture', './fixture'), /fixture\/fixture\.js$/);
+ 	t.is(resolveFrom.silent('fixture', './nonexistent'), undefined);
+ 
+ 	const silentResolveFromfixture = resolveFrom.silent.bind(null, 'fixture');
+-	t.regex(silentResolveFromfixture('./fixture'), /fixture\/fixture\.js$/);
++	t.match(silentResolveFromfixture('./fixture'), /fixture\/fixture\.js$/);
+ 
+ 	t.is(resolveFrom.silent('fixture-not-exists', './fixture'), undefined);
++
++	t.end();
+ });

@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/pkg-info.mk
+
+%:
+	dh $@
+
+execute_before_dh_auto_configure:
+	mkdir -p debian/node_modules
+	ln --force --symbolic ../.. debian/node_modules/resolve-from
+	ln --force --symbolic ../../Xcall debian/node_modules/callsites
+	ln --force --symbolic ../../Xfresh debian/node_modules/import-fresh
+	ln --force --symbolic ../../Xparent debian/node_modules/parent-module
+
+override_dh_gencontrol:
+	dh_gencontrol -- \
+		-V"call:Version=$(shell jq --raw-output .version < Xcall/package.json)~$(DEB_VERSION)" \
+		-V"fresh:Version=$(shell jq --raw-output .version < Xfresh/package.json)~$(DEB_VERSION)" \
+		-V"parent:Version=$(shell jq --raw-output .version < Xparent/package.json)~$(DEB_VERSION)"
+
+# TODO: check resolve-from tests when tape v4.13.0 is in Debian
+override_dh_auto_test:
+	mkdir --parents fixture/fixture-for-symlinks/subfolder/symlink-target
+#	NODE_PATH=debian/node_modules tape test.js
+	cd Xcall && NODE_PATH=../debian/node_modules tape test.js
+	cd Xparent && NODE_PATH=../debian/node_modules tape test.js
+	cd Xfresh && NODE_PATH=../debian/node_modules tape test.js

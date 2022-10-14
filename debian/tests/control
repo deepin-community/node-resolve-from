@@ -1,0 +1,25 @@
+Test-Command:
+ node -e "require('callsites');";
+ node -e "require('import-fresh');";
+ node -e "require('parent-module');";
+ node -e "require('resolve-from');"
+Depends:
+ node-resolve-from,
+ nodejs,
+Restrictions: superficial
+
+Test-Command:
+ set -e;
+ sed -i -e "s,require('\\.'),require('callsites')," Xcall/test.js;
+ sed -i -e "s,require('\\.'),require('import-fresh')," Xfresh/test.js;
+ sed -i -e "s,require('\\.'),require('parent-module')," Xparent/test.js;
+ sed -i -e "s,require('\\.'),require('resolve-from')," test.js;
+ find -type f -name index.js -delete;
+# tape test.js;
+ cd Xcall && NODE_PATH=../debian/node_modules tape test.js;
+# cd Xparent && NODE_PATH=../debian/node_modules test.js;
+# cd Xfresh && NODE_PATH=../debian/node_modules test.js;
+Depends:
+ node-execa,
+ node-resolve-from,
+ node-tape,

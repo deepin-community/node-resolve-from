@@ -1,0 +1,63 @@
+node-resolve-from (5.0.0+~3.1.0+~3.3.0+~2.0.0-1) unstable; urgency=medium
+
+  [ upstream ]
+  * new release(s)
+
+  [ Debian Janitor ]
+  * use secure copyright file specification URI
+  * build-depend on debhelper-compat (not debhelper)
+  * set upstream metadata fields:
+    Bug-Database Bug-Submit Repository Repository-Browse
+  * update Vcs-* headers from URL redirect
+  * use canonical URL in Vcs-Git
+  * set Multi-Arch: foreign
+
+  [ Jonas Smedegaard ]
+  * add myself as uploader
+  * add git-buildpackage settings:
+    + use pristine-tar
+    + use signed tags
+    + filter-out any .git* files
+    + use DEP-14 git branch names
+    + add usage comment
+  * update watch file:
+    + use file format 4 (not 3)
+    + use Github pattern
+    + set dversionmangle=auto
+    + simplify regular expressions
+    + use substitution strings
+    + add usage comment
+  * stop build-depend on dh-buildinfo
+  * embed and install Node.js modules
+    callsites import-fresh parent-module;
+    provide virtual packages
+    node-callsites node-import-fresh node-parent-module;
+    build-depend on jq;
+    break older node-cosmiconfig (where previously embedded)
+  * add patch cherry-picked upstream
+    to compensate a test for expanded error message since Node.js 12
+  * add patch 2001
+    to use Node.js modules mocha chai (not ava)
+  * check tests during build and as autopkgtest;
+    annotate simple autopkgtest as superficial;
+    build-depend on node-execa node-tape
+  * stop (build-)depend on nodejs;
+    fix have autopkgtest depend on nodejs
+  * declare compliance with Debian Policy 4.5.1
+  * use debhelper compatibility level 13 (not 9)
+  * set Rules-Requires-Root: no
+
+ -- Jonas Smedegaard <dr@jones.dk>  Fri, 01 Jan 2021 15:59:42 +0100
+
+node-resolve-from (4.0.0-1) unstable; urgency=medium
+
+  * Team upload
+  * New upstream release
+
+ -- Pirate Praveen <praveen@debian.org>  Sat, 03 Feb 2018 20:29:06 +0530
+
+node-resolve-from (2.0.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #847361)
+
+ -- Sruthi Chandran <srud@disroot.org>  Wed, 07 Dec 2016 20:12:01 +0530

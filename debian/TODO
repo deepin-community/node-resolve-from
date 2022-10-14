@@ -1,0 +1,4 @@
+  * check more tests during build and as autopkgtest
+    when Node.js module tape v4.13.0 is in Debian
+  * check more tests as autopkgtest
+    by further mangling them for system-shared install

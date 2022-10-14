@@ -1,0 +1,30 @@
+version=4
+# check: uscan --report
+# update: gbp import-orig --upstream-vcs-tag=vX.Y.Z --uscan
+
+opts=\
+filenamemangle=s/.*?(@ANY_VERSION@@ARCHIVE_EXT@)/@PACKAGE@-$1/,\
+dversionmangle=auto \
+https://github.com/sindresorhus/resolve-from/tags \
+.*?@ANY_VERSION@@ARCHIVE_EXT@ group
+
+opts=\
+component=Xcall,\
+filenamemangle=s/.*?(@ANY_VERSION@@ARCHIVE_EXT@)/@PACKAGE@-Xcall-$1/,\
+dversionmangle=auto \
+https://github.com/sindresorhus/callsites/tags \
+.*?@ANY_VERSION@@ARCHIVE_EXT@ group
+
+opts=\
+component=Xfresh,\
+filenamemangle=s/.*?(@ANY_VERSION@@ARCHIVE_EXT@)/@PACKAGE@-Xfresh-$1/,\
+dversionmangle=auto \
+https://github.com/sindresorhus/import-fresh/tags \
+.*?@ANY_VERSION@@ARCHIVE_EXT@ group
+
+opts=\
+component=Xparent,\
+filenamemangle=s/.*?(@ANY_VERSION@@ARCHIVE_EXT@)/@PACKAGE@-Xparent-$1/,\
+dversionmangle=auto \
+https://github.com/sindresorhus/parent-module/tags \
+.*?@ANY_VERSION@@ARCHIVE_EXT@ group
